@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Fest'Breizh — Les sorties de Bretagne</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#B7CFE0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Fest'Breizh">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F5F7F5; --ink: #2F3A31; --ink-soft: #6B786D; --ink-faint: #8B978C;
+    --border: #E5EBE3; --green: #C9DFC5; --blue: #B7CFE0; --coral: #F4A6A0;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); font-family: 'Poppins','Segoe UI',sans-serif; color: var(--ink); }
+  .fraunces { font-family: 'Fraunces', serif; }
+  a { color: inherit; }
+
+  .header { background: linear-gradient(135deg, var(--green) 0%, var(--blue) 55%, var(--coral) 100%);
+    padding: 40px 24px 44px; position: relative; overflow: hidden; }
+  .header-inner { max-width: 960px; margin: 0 auto; position: relative; z-index: 1; }
+  .eyebrow { color: rgba(255,255,255,.9); font-size: 13px; letter-spacing: .12em; text-transform: uppercase; margin: 0 0 8px; }
+  .h1 { color: #fff; font-size: 40px; font-weight: 600; margin: 0 0 10px; }
+  .tagline { color: rgba(255,255,255,.95); font-size: 16px; max-width: 560px; margin: 0 0 14px; line-height: 1.4; }
+  .badges { display: flex; flex-wrap: wrap; gap: 8px; }
+  .badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: #fff;
+    background: rgba(255,255,255,.25); backdrop-filter: blur(4px); padding: 5px 12px; border-radius: 999px; }
+  .dot { width: 6px; height: 6px; border-radius: 999px; display: inline-block; }
+  .wave { position: absolute; bottom: 0; left: 0; width: 100%; opacity: .5; }
+
+  .main { max-width: 960px; margin: 0 auto; padding: 32px 24px; }
+  .search-bar { display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid var(--border);
+    border-radius: 16px; padding: 12px 16px; margin-bottom: 24px; }
+  .search-bar input { border: none; outline: none; width: 100%; font-size: 14px; font-family: inherit; color: var(--ink); }
+  .search-bar input::placeholder { color: #A9B6A6; }
+
+  .filters-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 20px; }
+  @media (min-width: 768px) { .filters-grid { grid-template-columns: repeat(4, 1fr); } }
+  .field { position: relative; }
+  .field svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); pointer-events: none; }
+  .field select, .field input { width: 100%; background: #fff; border: 1px solid var(--border); border-radius: 12px;
+    padding: 10px 14px 10px 36px; font-size: 14px; font-family: inherit; color: var(--ink); appearance: none; }
+  .field .chevron { left: auto; right: 12px; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px; }
+  .chip { font-size: 12px; font-weight: 500; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--border);
+    background: #fff; color: var(--ink-soft); cursor: pointer; transition: transform .15s ease; font-family: inherit; }
+  .chip:hover { transform: translateY(-2px); }
+  .chip.active { color: var(--ink); }
+  .chip.reset { color: #9A5B58; display: inline-flex; align-items: center; gap: 4px; }
+
+  .count { font-size: 14px; color: var(--ink-faint); margin-bottom: 16px; }
+
+  .grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+  @media (min-width: 640px) { .grid { grid-template-columns: 1fr 1fr; } }
+  .card { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 20px;
+    box-shadow: 0 1px 2px rgba(0,0,0,.03); transition: transform .18s ease, box-shadow .18s ease;
+    display: block; text-decoration: none; color: inherit; }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 12px 24px rgba(60,70,60,0.10); }
+  .card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .type-tag { font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 999px; color: var(--ink); }
+  .card-date { font-size: 12px; font-weight: 500; color: var(--ink-faint); }
+  .card-title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
+  .card-title { font-size: 18px; margin: 0; }
+  .real-badge { flex-shrink: 0; font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 999px;
+    background: #EAF4E8; color: #5C7A5E; border: 1px solid var(--green); white-space: nowrap; }
+  .card-desc { font-size: 14px; color: var(--ink-soft); margin: 0 0 12px; line-height: 1.4; }
+  .card-meta { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-faint); flex-wrap: wrap; }
+
+  .empty { text-align: center; padding: 64px 24px; background: #fff; border-radius: 16px; border: 1px solid var(--border); }
+  .empty p.title { font-family: 'Fraunces', serif; font-size: 20px; margin: 0 0 8px; }
+  .empty p.sub { font-size: 14px; color: var(--ink-faint); margin: 0 0 16px; }
+  .empty button { font-size: 14px; font-weight: 500; padding: 10px 18px; border-radius: 999px; border: none;
+    background: var(--green); color: #2F4331; cursor: pointer; font-family: inherit; }
+
+  .footer { text-align: center; font-size: 12px; color: #9DAF9E; padding: 32px 24px; line-height: 1.6; }
+  ::selection { background: #F0AFC4; color: #fff; }
+
+  .scroll-top-btn {
+    position: fixed; bottom: 24px; right: 24px; width: 46px; height: 46px;
+    border-radius: 999px; border: 1px solid var(--border); background: #fff;
+    box-shadow: 0 4px 14px rgba(0,0,0,.12); display: flex; align-items: center;
+    justify-content: center; cursor: pointer; opacity: 0; pointer-events: none;
+    transform: translateY(8px); transition: opacity .2s ease, transform .2s ease;
+    z-index: 20;
+  }
+  .scroll-top-btn.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+  .scroll-top-btn:hover { background: var(--green); }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <p class="eyebrow">Bretagne · 2026</p>
+    <h1 class="h1 fraunces">Fest'Breizh</h1>
+    <p class="tagline">Toutes les sorties de Bretagne, département et commune par commune : fest-noz, marchés, brocantes, pardons et bien plus.</p>
+    <div class="badges" id="badges"></div>
+  </div>
+  <svg class="wave" height="28" viewBox="0 0 1200 28" preserveAspectRatio="none">
+    <path d="M0,14 Q60,0 120,14 T240,14 T360,14 T480,14 T600,14 T720,14 T840,14 T960,14 T1080,14 T1200,14 V28 H0 Z" fill="#F5F7F5" />
+  </svg>
+</header>
+
+<main class="main">
+  <div class="search-bar">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8AA592" stroke-width="2" stroke-linecap="round"><path d="m21 21-4.34-4.34M18.5 10.5a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"/></svg>
+    <input id="search" type="text" placeholder="Rechercher un événement…" />
+  </div>
+
+  <div class="filters-grid">
+    <div class="field">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6E8E76" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v18H3z M3 9h18 M3 15h18 M9 3v18 M15 3v18"/></svg>
+      <select id="department"><option value="">Toute la Bretagne</option></select>
+      <svg class="chevron" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9DAF9E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="field">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6E8E76" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z M12 10.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"/></svg>
+      <select id="commune"><option value="">Toutes les communes</option></select>
+      <svg class="chevron" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9DAF9E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+    </div>
+    <div class="field">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6E8E76" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/></svg>
+      <input id="date-from" type="date" />
+    </div>
+    <div class="field">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6E8E76" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/></svg>
+      <input id="date-to" type="date" />
+    </div>
+  </div>
+
+  <div class="chips" id="chips"></div>
+
+  <p class="count" id="count"></p>
+  <div id="results"></div>
+</main>
+
+<footer class="footer">
+  Fest'Breizh — sources en direct : API nationale DATAtourisme + base "Événements Publics" OpenAgenda (gratuites, mises à jour automatiquement à chaque ouverture) · complétées par une liste de secours d'événements réels.
+</footer>
+
+<button class="scroll-top-btn" id="scroll-top-btn" aria-label="Revenir en haut">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B463D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5 M5 12l7-7 7 7"/></svg>
+</button>
+
+<script>
+// ---------- Données ----------
+var DEPARTMENTS = [
+  { code: "22", name: "Côtes-d'Armor" },
+  { code: "29", name: "Finistère" },
+  { code: "35", name: "Ille-et-Vilaine" },
+  { code: "56", name: "Morbihan" }
+];
+var deptByCode = {};
+DEPARTMENTS.forEach(function (d) { deptByCode[d.code] = d; });
+
+// Liste de référence utilisée en secours pour repérer une commune dans les
+// données (les filtres affichés à l'écran sont, eux, générés dynamiquement
+// à partir des événements réellement reçus — voir renderCommuneOptions).
+var COMMUNES = [
+  // Côtes-d'Armor (22)
+  "Saint-Brieuc", "Lannion", "Dinan", "Guingamp", "Lamballe-Armor",
+  "Paimpol", "Perros-Guirec", "Tréguier", "Loudéac", "Plérin",
+  "Binic-Étables-sur-Mer", "Erquy", "Pléneuf-Val-André", "Rostrenen", "Plouha",
+  "Trégastel", "Bégard", "Callac", "Matignon", "Plancoët", "Quintin",
+  // Finistère (29)
+  "Brest", "Quimper", "Morlaix", "Concarneau", "Douarnenez", "Landerneau",
+  "Quimperlé", "Carhaix-Plouguer", "Crozon", "Pont-l'Abbé", "Châteaulin",
+  // Ille-et-Vilaine (35)
+  "Rennes", "Saint-Malo", "Fougères", "Vitré", "Redon", "Combourg",
+  "Dol-de-Bretagne", "Cancale", "Bécherel", "Janzé",
+  // Morbihan (56)
+  "Vannes", "Lorient", "Auray", "Pontivy", "Ploërmel", "Hennebont",
+  "Quiberon", "Carnac", "Locminé", "Guémené-sur-Scorff"
+];
+
+var TYPES = [
+  { id: "fest-noz", label: "Fest-noz", color: "#F4A6A0" },
+  { id: "concert", label: "Concert", color: "#B7CFE0" },
+  { id: "brocante", label: "Brocante / Vide-greniers", color: "#E7D9B8" },
+  { id: "marche", label: "Marché de producteurs", color: "#C9DFC5" },
+  { id: "exposition", label: "Exposition", color: "#D7C6E6" },
+  { id: "fete", label: "Fête locale", color: "#F6C89F" },
+  { id: "bal", label: "Bal", color: "#F0AFC4" },
+  { id: "pardon", label: "Pardon", color: "#B9E0D4" },
+  { id: "festival", label: "Festival", color: "#F4B8B0" },
+  { id: "regate", label: "Régate / nautique", color: "#A8D4DE" },
+  { id: "kermesse", label: "Kermesse", color: "#F2D48C" },
+  { id: "salon", label: "Salon artisanat", color: "#D3B8D8" },
+  { id: "course", label: "Course / trail", color: "#B8D8B0" },
+  { id: "marche-noel", label: "Marché de Noël", color: "#E3B8A8" },
+  { id: "concours", label: "Concours (palets, pétanque…)", color: "#CFE0B8" },
+  { id: "autre", label: "Autre", color: "#DCE3DE" }
+];
+var typeById = {};
+TYPES.forEach(function (t) { typeById[t.id] = t; });
+
+var SEED_EVENTS = [
+  { id: 1, title: "Fête des Jardins", commune: "Binic-Étables-sur-Mer", date: "2026-07-05", dateLabel: "5 juillet 2026", type: "marche", desc: "Une vingtaine de pépiniéristes et producteurs locaux réunis, animations gratuites pour toute la famille.", real: true, dept: "22" },
+  { id: 2, title: "La Kermesse de la Kafétière", commune: "Lannion", date: "2026-07-05", dateLabel: "5 juillet 2026", type: "kermesse", desc: "Kermesse associative conviviale pour remercier les bénévoles et faire vivre le projet local.", real: true, dept: "22" },
+  { id: 3, title: "Pardon de Notre-Dame-de-Bon-Secours", commune: "Guingamp", date: "2026-07-04", dateLabel: "3 au 5 juillet 2026", type: "pardon", desc: "Grand pardon marial : messes, veillée de louanges et procession traditionnelle.", real: true, dept: "22" },
+  { id: 4, title: "Pardon et Fest-Deiz", commune: "Bon Repos sur Blavet", date: "2026-07-05", dateLabel: "5 juillet 2026", type: "pardon", desc: "Messe à la chapelle de Rosquelfen suivie d'un repas et d'un fest-deiz.", real: true, dept: "22" },
+  { id: 5, title: "Jazz in Langourla", commune: "Le Mené", date: "2026-07-31", dateLabel: "31 juillet au 2 août 2026", type: "concert", desc: "Festival de jazz convivial en plein air, plusieurs scènes et concerts gratuits.", real: true, dept: "22" },
+  { id: 6, title: "Festival des Vieux Gréements", commune: "Paimpol", date: "2026-08-14", dateLabel: "14 au 16 août 2026", type: "regate", desc: "Rassemblement de voiliers traditionnels dans le port, animations et déambulations musicales.", real: true, dept: "22" },
+  { id: 7, title: "Festival Plinn du Danouët", commune: "Kerpert", date: "2026-08-08", dateLabel: "8 au 15 août 2026", type: "fest-noz", desc: "Festival entièrement dédié à la danse plinn, tradition du Centre-Bretagne.", real: true, dept: "22" },
+  { id: 8, title: "Pardon Notre-Dame de la Clarté", commune: "Perros-Guirec", date: "2026-08-15", dateLabel: "15 août 2026", type: "pardon", desc: "L'un des grands pardons bretons de l'été, procession suivie d'un temps convivial.", real: true, dept: "22" },
+  { id: 9, title: "Pardon de Querrien", commune: "Loudéac", date: "2026-08-15", dateLabel: "15 août 2026", type: "pardon", desc: "Pardon traditionnel costarmoricain du 15 août.", real: true, dept: "22" },
+  { id: 10, title: "Fête du Pardon de Saint-Yves", commune: "Tréguier", date: "2026-09-15", dateLabel: "15 septembre 2026", type: "pardon", desc: "Grand rassemblement spirituel et traditionnel réunissant pèlerins et visiteurs.", real: true, dept: "22" },
+  { id: 11, title: "Trail à travers l'Estran", commune: "Trévou-Tréguignec", date: "2026-09-27", dateLabel: "27 septembre 2026", type: "course", desc: "Course nature le long du littoral costarmoricain.", real: true, dept: "22" },
+  { id: 12, title: "Fête de la Coquille Saint-Jacques", commune: "Saint-Quay-Portrieux", date: "2026-10-10", dateLabel: "10 et 11 octobre 2026", type: "fete", desc: "Dégustations, animations maritimes et marché du port pour l'ouverture de la saison de pêche.", real: true, dept: "22" },
+  { id: 13, title: "Concours photo Objectif Patrimoines", commune: "Moncontour", date: "2026-07-16", dateLabel: "jusqu'au 23 septembre 2026", type: "concours", desc: "Concours photo amateur autour des patrimoines de 75 communes labellisées de Bretagne.", real: true, dept: "22" },
+  { id: 14, title: "Concours photo — Le Sport", commune: "Fréhel", date: "2026-07-16", dateLabel: "jusqu'au 31 août 2026", type: "concours", desc: "Concours photo annuel ouvert à tous les passionnés d'images sur le thème du sport.", real: true, dept: "22" }
+];
+
+// Détecte le département breton (22/29/35/56) à partir d'un code INSEE ou
+// postal — les 2 premiers chiffres suffisent, aucun autre département
+// français ne partage ces préfixes.
+function deptFromInseeOrCp() {
+  for (var i = 0; i < arguments.length; i++) {
+    var v = arguments[i] || "";
+    var prefix = v.slice(0, 2);
+    if (deptByCode[prefix]) return prefix;
+  }
+  return null;
+}
+
+function pick(fields, candidates) {
+  for (var i = 0; i < candidates.length; i++) { if (fields[candidates[i]]) return fields[candidates[i]]; }
+  return null;
+}
+function guessCommune(fields) {
+  var found = pick(fields, ["commune", "commune_nom", "nom_commune", "ville", "city", "localite"]);
+  if (found) return found;
+  var blob = JSON.stringify(fields).toLowerCase();
+  var match = COMMUNES.find(function (c) { return blob.indexOf(c.toLowerCase()) !== -1; });
+  return match || "Bretagne";
+}
+function guessType(fields) {
+  var blob = JSON.stringify(fields).toLowerCase();
+  if (blob.indexOf("fest-noz") !== -1 || blob.indexOf("fest noz") !== -1) return "fest-noz";
+  if (blob.indexOf("pardon") !== -1) return "pardon";
+  if (blob.indexOf("concert") !== -1) return "concert";
+  if (blob.indexOf("brocante") !== -1 || blob.indexOf("vide-grenier") !== -1 || blob.indexOf("vide grenier") !== -1) return "brocante";
+  if (blob.indexOf("march") !== -1 && (blob.indexOf("noel") !== -1 || blob.indexOf("noël") !== -1)) return "marche-noel";
+  if (blob.indexOf("march") !== -1) return "marche";
+  if (blob.indexOf("exposition") !== -1 || blob.indexOf("expo") !== -1) return "exposition";
+  if (blob.indexOf("bal") !== -1) return "bal";
+  if (blob.indexOf("festival") !== -1) return "festival";
+  if (blob.indexOf("régate") !== -1 || blob.indexOf("regate") !== -1 || blob.indexOf("voile") !== -1 || blob.indexOf("nautique") !== -1) return "regate";
+  if (blob.indexOf("kermesse") !== -1) return "kermesse";
+  if (blob.indexOf("salon") !== -1) return "salon";
+  if (blob.indexOf("trail") !== -1 || blob.indexOf("course") !== -1 || blob.indexOf("randonn") !== -1) return "course";
+  if (blob.indexOf("concours") !== -1) return "concours";
+  if (blob.indexOf("fête") !== -1 || blob.indexOf("fete") !== -1) return "fete";
+  return "autre";
+}
+function formatDateShort(iso) {
+  var d = new Date(iso + "T00:00:00");
+  return d.toLocaleDateString("fr-FR", { day: "2-digit", month: "short" });
+}
+function formatDateLong(iso) {
+  var d = new Date(iso + "T00:00:00");
+  return d.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
+}
+
+// ---------- Source live n°1 : API nationale DATAtourisme ----------
+var DATATOURISME_API_KEY = "45a23277-69bf-4d33-a12e-cab216b32870";
+var DT_FILTER_EXPR = "isLocatedAt.address.hasAddressCity.isPartOfDepartment.insee[in]=22,29,35,56";
+function dtPageUrl(page) {
+  return "https://api.datatourisme.fr/v1/entertainmentAndEvent?filters=" + encodeURIComponent(DT_FILTER_EXPR) +
+    "&page_size=250&page=" + page + "&api_key=" + DATATOURISME_API_KEY;
+}
+
+function dig(o, path) {
+  var acc = o;
+  for (var i = 0; i < path.length; i++) {
+    if (acc == null) return null;
+    acc = acc[path[i]];
+  }
+  return acc == null ? null : acc;
+}
+function normalizeDatatourismeRecord(obj, idx) {
+  var addr = dig(obj, ["isLocatedAt", 0, "address", 0]) || {};
+  var insee = dig(addr, ["hasAddressCity", "insee"]) || "";
+  var postal = addr.postalCode || "";
+  var dept = deptFromInseeOrCp(insee, postal);
+  if (!dept) return null;
+
+  var label = dig(obj, ["label", "@fr"]) || "Événement";
+  var desc = dig(obj, ["hasDescription", 0, "description", "@fr"]) || "Détails à consulter sur la fiche officielle.";
+  var commune = addr.addressLocality || dig(addr, ["hasAddressCity", "label", "@fr"]) || "Bretagne";
+
+  // Le nom du champ de date/période varie selon les fiches DATAtourisme
+  // (hasPeriodOfTime, takesPlaceAt, hasTemporalCharacteristics selon les
+  // versions) — on reste tolérant et on n'exclut pas la fiche si absent.
+  var dateRaw =
+    dig(obj, ["hasPeriodOfTime", 0, "startDate"]) ||
+    dig(obj, ["takesPlaceAt", 0, "startDate"]) ||
+    dig(obj, ["hasTemporalCharacteristics", 0, "startDate"]);
+  var date = null;
+  if (dateRaw) { var parsed = new Date(dateRaw); if (!isNaN(parsed)) date = parsed.toISOString().slice(0, 10); }
+
+  var url = dig(obj, ["hasContact", 0, "homepage", 0]) || dig(obj, ["hasBeenCreatedBy", "homepage", 0]) || null;
+
+  return { id: "dt-" + idx, title: label, commune: commune, dept: dept, date: date, dateLabel: date ? null : "Voir la fiche pour les dates", type: guessType(obj),
+    desc: typeof desc === "string" ? desc.slice(0, 180) : "Détails à consulter sur la fiche officielle.",
+    real: true, live: true, url: url };
+}
+
+// ---------- Source live n°2 : base globale "Événements Publics" OpenAgenda ----------
+// Dataset Opendatasoft, base nationale — filtrage entièrement côté client
+// sur les 4 départements bretons (les noms de champs exacts ont été confirmés
+// par un test réel : location_department, location_postalcode, location_insee).
+var OA_DATASET_BASE = "https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/evenements-publics-openagenda/records";
+var OA_DEPT_WHERE = "location_department in (" +
+  DEPARTMENTS.map(function (d) { return '"' + d.name + '"'; }).join(",") + ")";
+function oaPageUrl(offset, filtered) {
+  var base = OA_DATASET_BASE + "?limit=100&offset=" + offset;
+  return filtered ? base + "&where=" + encodeURIComponent(OA_DEPT_WHERE) : base;
+}
+
+function oaMultiLingual(field) {
+  if (!field) return null;
+  if (typeof field === "string") return field;
+  var vals = Object.keys(field).map(function (k) { return field[k]; });
+  return field.fr || field.en || vals[0] || null;
+}
+
+function stripHtml(html) {
+  return String(html).replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function normalizeOpenAgendaRecord(rec, idx) {
+  var fields = rec.fields || (rec.record && rec.record.fields) || rec;
+
+  // Certains agendas syndiqués sur OpenAgenda diffusent des offres d'emploi
+  // ou de formation (France Travail / ex-Pôle emploi) plutôt que de vrais
+  // événements grand public — on les exclut explicitement.
+  var originAgenda = (fields.originagenda_title || "").toLowerCase();
+  var contributorOrg = (fields.contributor_organization || "").toLowerCase();
+  if (originAgenda.indexOf("france travail") !== -1 || originAgenda.indexOf("pôle emploi") !== -1 ||
+      originAgenda.indexOf("pole emploi") !== -1 || contributorOrg.indexOf("france travail") !== -1) {
+    return null;
+  }
+
+  // De nombreux enregistrements ont les champs de localisation vides
+  // (qualité de la donnée source) — on croise plusieurs signaux avant
+  // d'exclure un événement.
+  var city = fields.location_city || "";
+  var deptName = fields.location_department || "";
+  var cp = fields.location_postalcode || "";
+  var insee = fields.location_insee || "";
+  var blob = JSON.stringify(fields).toLowerCase();
+
+  var dept = deptFromInseeOrCp(insee, cp) ||
+    (function () {
+      var found = DEPARTMENTS.find(function (d) { return deptName.toLowerCase().indexOf(d.name.toLowerCase()) !== -1; });
+      return found ? found.code : null;
+    })() ||
+    (function () {
+      // Dernier recours pour les fiches sans aucun champ de localisation
+      // renseigné : recherche du nom du département dans tout l'enregistrement.
+      if (city || deptName || cp) return null;
+      var found = DEPARTMENTS.find(function (d) { return blob.indexOf(d.name.toLowerCase()) !== -1; });
+      return found ? found.code : null;
+    })();
+  if (!dept) return null;
+
+  var title = fields.title_fr || "Événement";
+  var desc = fields.description_fr || (fields.longdescription_fr ? stripHtml(fields.longdescription_fr) : null) ||
+    "Détails à consulter sur la fiche officielle.";
+  var commune = city || guessCommune(fields);
+  var dateRaw = fields.firstdate_begin;
+  var date = null;
+  if (dateRaw) { var parsed = new Date(dateRaw); if (!isNaN(parsed)) date = parsed.toISOString().slice(0, 10); }
+  if (!date) return null;
+
+  var todayIso = new Date().toISOString().slice(0, 10);
+  var lastDateRaw = fields.lastdate_end || fields.lastdate_begin;
+  var endDate = date;
+  if (lastDateRaw) { var parsedEnd = new Date(lastDateRaw); if (!isNaN(parsedEnd)) endDate = parsedEnd.toISOString().slice(0, 10); }
+  if (endDate < todayIso) return null; // événement entièrement passé
+
+  var url = fields.canonicalurl || null;
+
+  return { id: "oa-" + idx, title: title, commune: commune, dept: dept, date: date, dateLabel: null, type: guessType(fields),
+    desc: typeof desc === "string" ? desc.slice(0, 180) : "Détails à consulter sur la fiche officielle.",
+    real: true, live: true, url: url };
+}
+
+// ---------- Lien "en savoir plus" pour chaque événement ----------
+function getEventUrl(e) {
+  if (e.url) return e.url;
+  var preciseQuery = encodeURIComponent('"' + e.title + '" ' + e.commune);
+  return "https://www.google.com/search?q=" + preciseQuery;
+}
+
+// ---------- État de l'application ----------
+var state = {
+  department: "", commune: "", activeTypes: [], dateFrom: "", dateTo: "", query: "",
+  dtEvents: [], dtStatus: (DATATOURISME_API_KEY && DATATOURISME_API_KEY !== "COLLE_TA_CLE_API_ICI") ? "loading" : "off",
+  oaEvents: [], oaStatus: "loading"
+};
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, function (c) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+  });
+}
+
+function getAllEvents() {
+  var combinedLive = state.dtEvents.concat(state.oaEvents);
+  var seenLive = {};
+  var dedupedLive = combinedLive.filter(function (e) {
+    var key = e.title.toLowerCase() + "|" + e.date;
+    if (seenLive[key]) return false;
+    seenLive[key] = true;
+    return true;
+  });
+  var seedFiltered = SEED_EVENTS.filter(function (e) {
+    var key = e.title.toLowerCase() + "|" + e.date;
+    return !seenLive[key];
+  });
+  return dedupedLive.concat(seedFiltered);
+}
+
+function renderBadges() {
+  var dt = state.dtStatus, oa = state.oaStatus;
+  function dotColor(status, offColor) {
+    if (status === "ok") return "#7EDCA0";
+    if (status === "loading") return "#F2D48C";
+    if (status === "off") return offColor || "#C9C9C9";
+    return "#F4A6A0";
+  }
+  var dtLabel = dt === "off" ? "DATAtourisme : clé non renseignée" :
+    dt === "loading" ? "DATAtourisme : connexion…" :
+    dt === "ok" ? "DATAtourisme : " + state.dtEvents.length + " événements" :
+    dt === "empty" ? "DATAtourisme : flux vide" : "DATAtourisme : indisponible";
+  var oaLabel = oa === "off" ? "OpenAgenda : clé non renseignée" :
+    oa === "loading" ? "OpenAgenda : connexion… (" + state.oaEvents.length + ")" :
+    oa === "ok" ? "OpenAgenda : " + state.oaEvents.length + " événements" :
+    oa === "empty" ? "OpenAgenda : flux vide" : "OpenAgenda : indisponible";
+  document.getElementById("badges").innerHTML =
+    '<div class="badge"><span class="dot" style="background:' + dotColor(dt) + '"></span>' + dtLabel + '</div>' +
+    '<div class="badge"><span class="dot" style="background:' + dotColor(oa) + '"></span>' + oaLabel + '</div>';
+}
+
+function renderChips() {
+  var html = TYPES.map(function (t) {
+    var active = state.activeTypes.indexOf(t.id) !== -1;
+    var style = active
+      ? 'background:' + t.color + ';border-color:' + t.color
+      : 'background:#fff;border-color:#E5EBE3';
+    return '<button class="chip' + (active ? ' active' : '') + '" data-type="' + t.id + '" style="' + style + '">' + t.label + '</button>';
+  }).join("");
+  var hasFilters = state.department || state.commune || state.activeTypes.length || state.dateFrom || state.dateTo || state.query;
+  if (hasFilters) {
+    html += '<button class="chip reset" id="reset-btn">✕ Réinitialiser</button>';
+  }
+  document.getElementById("chips").innerHTML = html;
+  document.querySelectorAll(".chip[data-type]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var id = btn.getAttribute("data-type");
+      var idx = state.activeTypes.indexOf(id);
+      if (idx === -1) state.activeTypes.push(id); else state.activeTypes.splice(idx, 1);
+      renderChips();
+      renderResults();
+    });
+  });
+  var resetBtn = document.getElementById("reset-btn");
+  if (resetBtn) resetBtn.addEventListener("click", resetFilters);
+}
+
+function renderCommuneOptions() {
+  var select = document.getElementById("commune");
+  var previous = state.commune;
+  var pool = getAllEvents().filter(function (e) {
+    return !state.department || e.dept === state.department;
+  });
+  var communes = Array.from(new Set(pool.map(function (e) { return e.commune; })
+    .filter(function (c) { return c && c !== "Bretagne"; })))
+    .sort(function (a, b) { return a.localeCompare(b, "fr"); });
+
+  select.innerHTML = '<option value="">Toutes les communes</option>' +
+    communes.map(function (c) { return '<option value="' + escapeHtml(c) + '">' + escapeHtml(c) + '</option>'; }).join("");
+
+  if (communes.indexOf(previous) !== -1) {
+    select.value = previous;
+  } else {
+    state.commune = "";
+  }
+}
+
+// ---------- Suggestions légères pour le champ commune (sans datalist natif) ----------
+function debounce(fn, wait) {
+  var t;
+  return function () {
+    var args = arguments;
+    clearTimeout(t);
+    t = setTimeout(function () { fn.apply(null, args); }, wait);
+  };
+}
+
+function resetFilters() {
+  state.department = ""; state.commune = ""; state.activeTypes = []; state.dateFrom = ""; state.dateTo = ""; state.query = "";
+  document.getElementById("department").value = "";
+  document.getElementById("date-from").value = "";
+  document.getElementById("date-to").value = "";
+  document.getElementById("search").value = "";
+  renderCommuneOptions();
+  renderChips();
+  renderResults();
+}
+
+function renderResults() {
+  var todayIso = new Date().toISOString().slice(0, 10);
+  var events = getAllEvents().filter(function (e) {
+    if (e.date && e.date < todayIso) return false; // événement déjà passé
+    if (state.department && e.dept !== state.department) return false;
+    if (state.commune && e.commune !== state.commune) return false;
+    if (state.activeTypes.length && state.activeTypes.indexOf(e.type) === -1) return false;
+    if (state.dateFrom && e.date && e.date < state.dateFrom) return false;
+    if (state.dateTo && e.date && e.date > state.dateTo) return false;
+    if (state.query) {
+      var haystack = (e.title + " " + e.desc).toLowerCase();
+      if (haystack.indexOf(state.query.toLowerCase()) === -1) return false;
+    }
+    return true;
+  }).sort(function (a, b) {
+    var da = a.date || "9999-99-99", db = b.date || "9999-99-99";
+    return da < db ? -1 : da > db ? 1 : 0;
+  });
+
+  document.getElementById("count").textContent = events.length + (events.length !== 1 ? " événements trouvés" : " événement trouvé");
+
+  var resultsEl = document.getElementById("results");
+  if (events.length === 0) {
+    resultsEl.innerHTML = '<div class="empty"><p class="title fraunces">Aucun événement pour ces critères</p>' +
+      '<p class="sub">Essayez d\'élargir vos dates ou de changer de commune.</p>' +
+      '<button id="empty-reset">Voir tous les événements</button></div>';
+    document.getElementById("empty-reset").addEventListener("click", resetFilters);
+    return;
+  }
+
+  resultsEl.innerHTML = '<div class="grid">' + events.map(function (e) {
+    var t = typeById[e.type] || typeById.autre;
+    var realBadge = e.real ? '<span class="real-badge">' + (e.live ? "en direct" : "source réelle") + '</span>' : "";
+    var dateDisplay = e.dateLabel ? escapeHtml(e.dateLabel) : formatDateLong(e.date);
+    var dateBadge = e.date ? formatDateShort(e.date) : "";
+    var link = getEventUrl(e);
+    return '<a class="card" href="' + escapeHtml(link) + '" target="_blank" rel="noopener noreferrer">' +
+      '<div class="card-top"><span class="type-tag" style="background:' + t.color + '">' + escapeHtml(t.label) + '</span>' +
+      '<span class="card-date">' + dateBadge + '</span></div>' +
+      '<div class="card-title-row"><h3 class="card-title fraunces">' + escapeHtml(e.title) + '</h3>' + realBadge + '</div>' +
+      '<p class="card-desc">' + escapeHtml(e.desc) + '</p>' +
+      '<div class="card-meta"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z M12 10.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"/></svg>' +
+      '<span>' + escapeHtml(e.commune) + '</span><span>·</span><span>' + dateDisplay + '</span></div>' +
+      '</a>';
+  }).join("") + '</div>';
+}
+
+// ---------- Bouton retour en haut ----------
+(function () {
+  var btn = document.getElementById("scroll-top-btn");
+  window.addEventListener("scroll", function () {
+    if (window.scrollY > 500) btn.classList.add("visible");
+    else btn.classList.remove("visible");
+  });
+  btn.addEventListener("click", function () {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+})();
+
+// ---------- Cache local (chargement instantané au retour sur le site) ----------
+// Les données restent toujours rafraîchies en arrière-plan à chaque ouverture ;
+// le cache ne sert qu'à afficher quelque chose immédiatement pendant ce temps.
+var CACHE_PREFIX = "festbreizh_cache_";
+function loadCache(key) {
+  try {
+    var raw = localStorage.getItem(CACHE_PREFIX + key);
+    if (!raw) return null;
+    var parsed = JSON.parse(raw);
+    return parsed && parsed.events ? parsed : null;
+  } catch (e) { return null; }
+}
+function saveCache(key, events) {
+  try {
+    localStorage.setItem(CACHE_PREFIX + key, JSON.stringify({ ts: Date.now(), events: events }));
+  } catch (e) {
+    console.warn("[Cache] non sauvegardé (quota ou navigation privée) :", e);
+  }
+}
+
+// ---------- Pagination en parallèle (par lots) ----------
+// Beaucoup plus rapide que page par page en série : plusieurs requêtes sont
+// envoyées en même temps, avec un rappel de progression pour mettre à jour
+// l'affichage au fur et à mesure plutôt que d'attendre la fin complète.
+function paginateConcurrent(pageUrlFn, extractRows, pageSize, concurrency, onProgress) {
+  return new Promise(function (resolve) {
+    var allRows = [];
+    var nextPage = 0;
+    var done = false;
+    var active = 0;
+
+    function checkFinish() {
+      if (done && active === 0) resolve(allRows);
+    }
+
+    function launchNext() {
+      if (done) return;
+      var page = nextPage++;
+      active++;
+      fetch(pageUrlFn(page))
+        .then(function (res) {
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          return res.json();
+        })
+        .then(function (data) {
+          var rows = extractRows(data);
+          allRows = allRows.concat(rows);
+          active--;
+          if (rows.length < pageSize) done = true;
+          if (onProgress) onProgress(allRows);
+          if (!done) launchNext();
+          checkFinish();
+        })
+        .catch(function (err) {
+          console.warn("[Pagination] arrêt sur la page " + page + ":", err.message);
+          active--;
+          done = true; // erreur ou limite de la plateforme atteinte : on s'arrête proprement
+          checkFinish();
+        });
+    }
+
+    for (var i = 0; i < concurrency; i++) launchNext();
+  });
+}
+
+// Affichage progressif limité pour ne pas surcharger le navigateur pendant
+// le chargement. Deux vitesses : le rendu des résultats reste réactif,
+// la reconstruction de la liste des communes (plus coûteuse, DOM plus
+// grand) est volontairement plus espacée.
+function throttledUpdate(fn, wait) {
+  var pending = false;
+  return function () {
+    if (pending) return;
+    pending = true;
+    setTimeout(function () { pending = false; fn(); }, wait || 400);
+  };
+}
+
+// ---------- Initialisation ----------
+function init() {
+  var departmentSelect = document.getElementById("department");
+  DEPARTMENTS.forEach(function (d) {
+    var opt = document.createElement("option");
+    opt.value = d.code; opt.textContent = d.name + " (" + d.code + ")";
+    departmentSelect.appendChild(opt);
+  });
+  departmentSelect.addEventListener("change", function (e) {
+    state.department = e.target.value;
+    state.commune = ""; // la commune sélectionnée peut ne plus être valide pour ce département
+    renderCommuneOptions();
+    renderResults();
+  });
+
+  var communeSelect = document.getElementById("commune");
+  communeSelect.addEventListener("change", function (e) { state.commune = e.target.value; renderResults(); });
+  document.getElementById("date-from").addEventListener("change", function (e) { state.dateFrom = e.target.value; renderResults(); });
+  document.getElementById("date-to").addEventListener("change", function (e) { state.dateTo = e.target.value; renderResults(); });
+  var debouncedSearch = debounce(function (value) { state.query = value; renderResults(); }, 200);
+  document.getElementById("search").addEventListener("input", function (e) { debouncedSearch(e.target.value); });
+
+  // ---- Chargement instantané depuis le cache local, pendant que les
+  // données fraîches se chargent en parallèle en arrière-plan ----
+  var dtCache = loadCache("dt"), oaCache = loadCache("oa");
+  if (dtCache) { state.dtEvents = dtCache.events; state.dtStatus = "ok"; }
+  if (oaCache) { state.oaEvents = oaCache.events; state.oaStatus = "ok"; }
+
+  renderBadges();
+  renderChips();
+  renderCommuneOptions();
+  renderResults();
+
+  // ---- Flux DATAtourisme (clé requise) — pagination parallèle par lots ----
+  if (DATATOURISME_API_KEY && DATATOURISME_API_KEY !== "COLLE_TA_CLE_API_ICI") {
+    var dtUpdateUI = throttledUpdate(function () { renderBadges(); renderResults(); }, 400);
+    var dtUpdateCommunes = throttledUpdate(renderCommuneOptions, 2000);
+    paginateConcurrent(
+      function (p) { return dtPageUrl(p + 1); },
+      function (data) { return data.objects || data.results || data.member || []; },
+      250, 6,
+      function (rowsSoFar) {
+        state.dtEvents = rowsSoFar.map(normalizeDatatourismeRecord).filter(Boolean);
+        state.dtStatus = "ok";
+        dtUpdateUI();
+        dtUpdateCommunes();
+      }
+    ).then(function (allRows) {
+      var normalized = allRows.map(normalizeDatatourismeRecord).filter(Boolean);
+      console.log("[DATAtourisme] total après filtrage Bretagne (4 départements):", normalized.length);
+      state.dtEvents = normalized;
+      state.dtStatus = normalized.length ? "ok" : "empty";
+      saveCache("dt", normalized);
+      renderBadges(); renderCommuneOptions(); renderResults();
+    });
+  }
+
+  // ---- Flux "Événements Publics" OpenAgenda (gratuit, sans clé) ----
+  // Filtre serveur par département essayé en premier ; repli automatique sur
+  // un balayage brut si la syntaxe échoue. Pagination parallèle par lots.
+  function runOaPagination(useFilter) {
+    var oaUpdateUI = throttledUpdate(function () { renderBadges(); renderResults(); }, 400);
+    var oaUpdateCommunes = throttledUpdate(renderCommuneOptions, 2000);
+    return paginateConcurrent(
+      function (p) { return oaPageUrl(p * 100, useFilter); },
+      function (data) { return data.records || data.results || []; },
+      100, 6,
+      function (rowsSoFar) {
+        state.oaEvents = rowsSoFar.map(normalizeOpenAgendaRecord).filter(Boolean);
+        state.oaStatus = "ok";
+        oaUpdateUI();
+        oaUpdateCommunes();
+      }
+    ).then(function (allRows) {
+      console.log("[OpenAgenda] nombre total de lignes reçues (filtre " + useFilter + "):", allRows.length);
+      if (allRows.length === 0 && useFilter) {
+        console.warn("[OpenAgenda] filtre serveur infructueux, repli sur le balayage brut.");
+        return runOaPagination(false);
+      }
+      var normalized = allRows.map(normalizeOpenAgendaRecord).filter(Boolean);
+      console.log("[OpenAgenda] après filtrage Bretagne (4 départements):", normalized.length);
+      state.oaEvents = normalized;
+      state.oaStatus = normalized.length ? "ok" : "empty";
+      saveCache("oa", normalized);
+      renderBadges(); renderCommuneOptions(); renderResults();
+    });
+  }
+  runOaPagination(true);
+}
+
+init();
+
+// Enregistrement du service worker (rend l'app installable). Ne fonctionne
+// que sur un vrai domaine HTTPS (Vercel, Netlify...), pas en ouverture
+// directe d'un fichier local — c'est normal si rien ne se passe en local.
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("sw.js").catch(function (err) {
+      console.warn("[PWA] service worker non enregistré :", err);
+    });
+  });
+}
+
+</script>
+</body>
+</html>

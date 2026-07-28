@@ -1,0 +1,30 @@
+{
+  "name": "Fest'Breizh — Les sorties de Bretagne",
+  "short_name": "Fest'Breizh",
+  "description": "Toutes les sorties de Bretagne : fest-noz, marchés, brocantes, pardons et bien plus, par département et par commune.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#B7CFE0",
+  "theme_color": "#B7CFE0",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
